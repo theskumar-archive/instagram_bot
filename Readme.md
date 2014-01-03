@@ -36,7 +36,7 @@ print result
 pip install https://github.com/theskumar/instagram_bot/archive/0.1.0.zip
 ```
 
-Instgram Bot requires 'Phantomjs' as a dependencies. If you have [node](http://nodejs.org/) installed, you can install it with
+Instagram Bot requires 'Phantomjs' as a dependency. If you have [node](http://nodejs.org/) installed, you can install it with
 ```
 npm -g install phantomjs
 ```

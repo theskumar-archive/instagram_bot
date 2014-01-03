@@ -26,4 +26,6 @@ setup(
         'splinter==0.5.4',
     ],
     zip_safe=False,
+    license='MIT',
+    url='https://github.com/theskumar/instagram_bot',
 )
