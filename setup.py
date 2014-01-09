@@ -20,11 +20,11 @@ setup(
     author_email='thes.kumar@gmail.com',
     packages=[
         'instagram_bot',
-        'Logbook',
     ],
     include_package_data=True,
     install_requires=[
         'splinter==0.5.4',
+        'Logbook==0.6.0',
     ],
     zip_safe=False,
     license='MIT',
