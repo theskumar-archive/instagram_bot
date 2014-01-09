@@ -20,6 +20,7 @@ setup(
     author_email='thes.kumar@gmail.com',
     packages=[
         'instagram_bot',
+        'logbook',
     ],
     include_package_data=True,
     install_requires=[

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import re
-import logging
+from logbook import Logger
 
 from splinter import Browser
 
-logger = logging.getLogger(__name__)
+logger = Logger('InstagramWebBot')
 
 class InstagramWebBot(object):
     '''Instagram Web Bot for automatic things using web browser.'''
