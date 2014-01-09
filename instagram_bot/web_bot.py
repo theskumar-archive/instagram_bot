@@ -31,7 +31,7 @@ class InstagramWebBot(object):
         self.browser.fill('password', password)
         btn = self.browser.find_by_value('Log in').first
         btn.click()
-        if self.browser.is_text_present(username):
+        if self.browser.title == 'Instagram':
             self.is_logged_in = True
             logger.info('Logged in as %s' % username)
         else:
