@@ -44,7 +44,7 @@ class InstagramWebBot(object):
            TODO:
            1. Add more error handling cases.
         '''
-        result = []
+        result = {}
 
         if not self.is_logged_in:
             logger.error('Must be logged-in to create a api client.')
@@ -67,7 +67,7 @@ class InstagramWebBot(object):
         for row in rows:
             key = self.slugify(row.find_by_tag('th').first.text)
             value = row.find_by_tag('td').first.text
-            result.append({key: value})
+            result.update({key: value})
 
         return result
 
