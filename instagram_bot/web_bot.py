@@ -71,6 +71,9 @@ class InstagramWebBot(object):
 
         return result
 
+    def __del__(self):
+        self.browser.quit()
+
 
 if __name__ == '__main__':
     from getpass import getpass
