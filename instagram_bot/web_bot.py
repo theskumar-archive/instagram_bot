@@ -14,8 +14,10 @@ class InstagramWebBot(object):
     REGISTER_CLIENT_URL = 'http://instagram.com/developer/clients/register/'
     LOGOUT_URL = 'http://instagram.com/accounts/logout/'
 
-    browser = Browser('phantomjs')
     is_logged_in = False
+
+    def __init__(self):
+        self.browser = Browser('phantomjs')
 
     def slugify(self, str):
         return re.sub(r'\W+','_',str).lower()
