@@ -73,17 +73,3 @@ class InstagramWebBot(object):
 
     def __del__(self):
         self.browser.quit()
-
-
-if __name__ == '__main__':
-    from getpass import getpass
-
-    print 'Enter instragram credentials below:'
-    username = raw_input('Username (email not allowed) : ')
-    password = getpass('Password (will not be displayed) : ')
-
-    bot = InstagramWebBot()
-    bot.login(username, password)
-    data = bot.create_api_client('test4', 'test4', 'http://helloworld.in', 'http://hello.txt')
-
-    print data
