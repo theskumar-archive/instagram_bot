@@ -12,33 +12,63 @@ class InstagramWebBot(object):
 
     LOGIN_URL = 'https://instagram.com/accounts/login/';
     REGISTER_CLIENT_URL = 'http://instagram.com/developer/clients/register/'
+    REGISTER_DEVELOPER_URL = 'http://instagram.com/developer/register/'
     LOGOUT_URL = 'http://instagram.com/accounts/logout/'
 
     is_logged_in = False
+    is_developer = False
 
-    def __init__(self):
+    def __init__(self, username, password):
         self.browser = Browser('phantomjs')
+        self.username = username
+        self.password = password
 
     def slugify(self, str):
         return re.sub(r'\W+','_',str).lower()
 
-    def login(self, username, password):
+    def login(self):
         '''Creates a login session'''
 
-        self.username = username
-        self.password = password
-
         self.browser.visit(self.LOGIN_URL)
-        self.browser.fill('username', username)
-        self.browser.fill('password', password)
+        self.browser.fill('username', self.username)
+        self.browser.fill('password', self.password)
         btn = self.browser.find_by_value('Log in').first
         btn.click()
         if self.browser.title == 'Instagram':
             self.is_logged_in = True
-            logger.info('Logged in as %s' % username)
+            logger.info('Logged in as %s' % self.username)
         else:
             self.is_logged_in = False
-            logger.error('Loggin Failed for %s' % username)
+            logger.error('Login Failed for %s' % self.username)
+
+    def register_developer(self, website="", phone_number="", description=""):
+        '''
+        Registers the user for developer access in instagram
+        '''
+        result = {}
+
+        if not self.is_logged_in:
+            logger.error('Must be logged-in to create register as a developer.')
+            return result;
+
+        self.browser.visit(self.REGISTER_DEVELOPER_URL)
+        if self.browser.is_text_present('Hello Developers.'):
+          logger.info('Developer registration done')
+          self.is_developer = True
+        elif self.browser.is_text_present('Developer Signup'):
+            logger.info('Registering as developer')
+            self.browser.fill('website', website)
+            self.browser.fill('phone_number', phone_number)
+            self.browser.fill('description', description)
+            self.browser.check('accept_terms')
+            btn = self.browser.find_by_value('Sign up').first
+            btn.click()
+            self.register_developer(website, phone_number, description)
+        else:
+            logger.info('Developer registration failed')
+            self.is_developer = False
+
+        return result
 
     def create_api_client(self, app_name, description, website_url, redirect_uri):
         '''Creates a new api client.
