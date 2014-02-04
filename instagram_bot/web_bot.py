@@ -145,15 +145,17 @@ class InstagramWebBot(object):
 
     def get_api_clients(self):
         self.browser.visit(self.MANAGE_CLIENTS_URL)
-        client_cards = self.browser.find_by_css('.card.client tbody')
+        client_cards = self.browser.find_by_css('.card.client')
         clients = []
         for client_card in client_cards:
-          rows = client_card.find_by_tag('tr')
+          rows = client_card.find_by_tag('tbody').find_by_tag('tr')
+          name = client_card.find_by_tag('h2').first.text
           result = {}
           for row in rows:
               key = self.slugify(row.find_by_tag('th').first.text)
               value = row.find_by_tag('td').first.text
               result.update({key: value})
+          result.update({'name': name})
           clients.append(result)
 
         return clients
