@@ -17,12 +17,12 @@ def random_string_generator(size=0, chars=string.ascii_lowercase + string.ascii_
 class InstagramWebBot(object):
     '''Instagram Web Bot for automatic things using web browser.'''
 
-    LOGIN_URL = 'https://instagram.com/accounts/login/';
+    LOGIN_URL = 'http://instagram.com/accounts/login/';
     MANAGE_CLIENTS_URL =  'http://instagram.com/developer/clients/manage/'
     REGISTER_CLIENT_URL = 'http://instagram.com/developer/clients/register/'
     REGISTER_DEVELOPER_URL = 'http://instagram.com/developer/register/'
     LOGOUT_URL = 'http://instagram.com/accounts/logout/'
-    CHANGE_PASSWORD_URL = 'https://instagram.com/accounts/password/change/'
+    CHANGE_PASSWORD_URL = 'http://instagram.com/accounts/password/change/'
 
     is_logged_in = False
     is_developer = False
@@ -51,8 +51,8 @@ class InstagramWebBot(object):
             logger.error('Login Failed for %s' % self.username)
 
     def change_password(self):
-        self.browser.visit(self.LOGIN_URL)
-        new_password = random_string_generator()
+        self.browser.visit(self.CHANGE_PASSWORD_URL)
+        new_password = random_string_generator(8)
         self.browser.fill('old_password', self.password)
         self.browser.fill('new_password1', new_password)
         self.browser.fill('new_password2', new_password)
@@ -60,6 +60,7 @@ class InstagramWebBot(object):
         btn.click()
         if self.browser.is_text_present('Thanks! You have successfully changed your password.'):
           logger.info('Password Changed')
+          logger.info(new_password)
           return new_password
         else:
           return None
@@ -75,11 +76,8 @@ class InstagramWebBot(object):
             logger.error('Must be logged-in to create register as a developer.')
             return result;
 
-        self.browser.visit(self.REGISTER_DEVELOPER_URL)
-        if self.browser.is_text_present('Hello Developers.'):
-          logger.info('Developer registration done')
-          self.is_developer = True
-        elif self.browser.is_text_present('Developer Signup'):
+        self.browser.visit(self.MANAGE_CLIENTS_URL)
+        if self.browser.is_text_present('Developer Signup'):
             logger.info('Registering as developer')
             self.browser.fill('website', website)
             self.browser.fill('phone_number', phone_number)
@@ -88,6 +86,9 @@ class InstagramWebBot(object):
             btn = self.browser.find_by_value('Sign up').first
             btn.click()
             self.register_developer(website, phone_number, description)
+        elif self.browser.is_text_present('Register a New Client'):
+          logger.info('Developer registration done')
+          self.is_developer = True
         else:
             logger.info('Developer registration failed')
             self.is_developer = False
