@@ -28,7 +28,7 @@ class InstagramWebBot(object):
     is_developer = False
 
     def __init__(self, username, password):
-        self.browser = Browser('firefox')
+        self.browser = Browser('phantomjs')
         self.username = username
         self.password = password
 
