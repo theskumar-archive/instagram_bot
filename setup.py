@@ -11,7 +11,7 @@ except ImportError:
     from distutils.core import setup
 
 
-version = '1.1.3'
+version = '1.1.4'
 
 setup(
     name='instagram_bot',

@@ -23,12 +23,13 @@ class InstagramWebBot(object):
     REGISTER_DEVELOPER_URL = 'http://instagram.com/developer/register/'
     LOGOUT_URL = 'http://instagram.com/accounts/logout/'
     CHANGE_PASSWORD_URL = 'http://instagram.com/accounts/password/change/'
+    APP_NAME_CHOICES = ['LOVE', 'AMOR', 'AMORE', 'AMOUR']
 
     is_logged_in = False
     is_developer = False
 
     def __init__(self, username, password):
-        self.browser = Browser('phantomjs')
+        self.browser = Browser('firefox')
         self.username = username
         self.password = password
 
@@ -131,18 +132,17 @@ class InstagramWebBot(object):
     def fill_api_client_form(self):
         if not self.is_logged_in:
             logger.error('Must be logged-in to create a api client.')
-            return result;
+        else:
+            app_name = self.APP_NAME_CHOICES[random.randint(0, (len(self.APP_NAME_CHOICES)-1))]
+            description = random_string_generator()
+            website_url = 'http://'+random_string_generator()
+            redirect_uri = 'http://dev.lovematically.fueled.com/complete/instagram'
 
-        app_name = random_string_generator()
-        description = random_string_generator()
-        website_url = random_string_generator()
-        redirect_uri = 'http://dev.lovematically.fueled.com/complete/instagram'
-
-        self.browser.visit(self.REGISTER_CLIENT_URL)
-        self.browser.fill('name', app_name)
-        self.browser.fill('description', description)
-        self.browser.fill('website_url', website_url)
-        self.browser.fill('redirect_uri', redirect_uri)
+            self.browser.visit(self.REGISTER_CLIENT_URL)
+            self.browser.fill('name', app_name)
+            self.browser.fill('description', description)
+            self.browser.fill('website_url', website_url)
+            self.browser.fill('redirect_uri', redirect_uri)
 
     def get_api_clients(self):
         self.browser.visit(self.MANAGE_CLIENTS_URL)
