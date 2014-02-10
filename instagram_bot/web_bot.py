@@ -4,6 +4,7 @@ import re
 from logbook import Logger
 import random
 import string
+import urllib
 
 from splinter import Browser
 
@@ -29,7 +30,7 @@ class InstagramWebBot(object):
     is_developer = False
 
     def __init__(self, username, password):
-        self.browser = Browser('firefox')
+        self.browser = Browser('phantomjs')
         self.username = username
         self.password = password
 
@@ -143,6 +144,28 @@ class InstagramWebBot(object):
             self.browser.fill('description', description)
             self.browser.fill('website_url', website_url)
             self.browser.fill('redirect_uri', redirect_uri)
+
+    def shell_fill_api_client_form(self, LOCAL_FILE_URL = "captcha.png"):
+        if not self.is_logged_in:
+            logger.error('Must be logged-in to create a api client.')
+        else:
+            app_name = self.APP_NAME_CHOICES[random.randint(0, (len(self.APP_NAME_CHOICES)-1))]
+            description = random_string_generator()
+            website_url = 'http://'+random_string_generator()
+            redirect_uri = 'http://lovematically.com/complete/instagram'
+
+            self.browser.visit(self.REGISTER_CLIENT_URL)
+            self.browser.fill('name', app_name)
+            self.browser.fill('description', description)
+            self.browser.fill('website_url', website_url)
+            self.browser.fill('redirect_uri', redirect_uri)
+            captcha_url = self.browser.find_by_id('recaptcha_challenge_image').first['src']
+            print captcha_url
+            urllib.urlretrieve(captcha_url, LOCAL_FILE_URL)
+            captcha_input = raw_input('Please enter captcha to continue:')
+            self.browser.find_by_id('recaptcha_response_field').first.fill(captcha_input)
+            btn = self.browser.find_by_value('Register').first
+            btn.click()
 
     def get_api_clients(self):
         self.browser.visit(self.MANAGE_CLIENTS_URL)
