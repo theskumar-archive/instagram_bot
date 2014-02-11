@@ -25,6 +25,7 @@ class InstagramWebBot(object):
     LOGOUT_URL = 'http://instagram.com/accounts/logout/'
     CHANGE_PASSWORD_URL = 'http://instagram.com/accounts/password/change/'
     APP_NAME_CHOICES = ['LOVE', 'AMOR', 'AMORE', 'AMOUR']
+    WAIT_TIME = 3;
 
     is_logged_in = False
     is_developer = False
@@ -148,24 +149,38 @@ class InstagramWebBot(object):
     def shell_fill_api_client_form(self, LOCAL_FILE_URL = "captcha.png"):
         if not self.is_logged_in:
             logger.error('Must be logged-in to create a api client.')
+            return False
         else:
-            app_name = self.APP_NAME_CHOICES[random.randint(0, (len(self.APP_NAME_CHOICES)-1))]
-            description = random_string_generator()
-            website_url = 'http://'+random_string_generator()
-            redirect_uri = 'http://lovematically.com/complete/instagram'
-
             self.browser.visit(self.REGISTER_CLIENT_URL)
-            self.browser.fill('name', app_name)
-            self.browser.fill('description', description)
-            self.browser.fill('website_url', website_url)
-            self.browser.fill('redirect_uri', redirect_uri)
-            captcha_url = self.browser.find_by_id('recaptcha_challenge_image').first['src']
-            print captcha_url
-            urllib.urlretrieve(captcha_url, LOCAL_FILE_URL)
-            captcha_input = raw_input('Please enter captcha to continue:')
-            self.browser.find_by_id('recaptcha_response_field').first.fill(captcha_input)
-            btn = self.browser.find_by_value('Register').first
-            btn.click()
+            if self.browser.is_text_present('Register new Client ID', wait_time=self.WAIT_TIME):
+              app_name = self.APP_NAME_CHOICES[random.randint(0, (len(self.APP_NAME_CHOICES)-1))]
+              description = random_string_generator()
+              website_url = 'http://'+random_string_generator()
+              redirect_uri = 'http://lovematically.com/complete/instagram'
+
+              self.browser.fill('name', app_name)
+              self.browser.fill('description', description)
+              self.browser.fill('website_url', website_url)
+              self.browser.fill('redirect_uri', redirect_uri)
+              captcha_url = self.browser.find_by_id('recaptcha_challenge_image').first['src']
+              print captcha_url
+              urllib.urlretrieve(captcha_url, LOCAL_FILE_URL)
+              captcha_input = raw_input('Please enter captcha to continue:')
+              self.browser.find_by_id('recaptcha_response_field').first.fill(captcha_input)
+              btn = self.browser.find_by_value('Register').first
+              btn.click()
+              if self.browser.is_text_present('Invalid captcha', wait_time=self.WAIT_TIME):
+                logger.error('Incorrect CAPTCHA, try again')
+                return self.shell_fill_api_client_form(LOCAL_FILE_URL)
+              elif self.browser.is_text_present('Successfully registered', wait_time=self.WAIT_TIME):
+                logger.info('Client registration successful')
+                return True
+              else:
+                logger.error('Client registration failed: UNKNOW ERROR')
+                return False
+            else:
+                return False
+                logger.error('Cannot register more clients with this accounts.')
 
     def get_api_clients(self):
         self.browser.visit(self.MANAGE_CLIENTS_URL)
