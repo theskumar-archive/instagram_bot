@@ -24,14 +24,15 @@ class InstagramWebBot(object):
     REGISTER_DEVELOPER_URL = 'http://instagram.com/developer/register/'
     LOGOUT_URL = 'http://instagram.com/accounts/logout/'
     CHANGE_PASSWORD_URL = 'http://instagram.com/accounts/password/change/'
+    APP_REDIRECT_URI = 'http://lovematically.com/complete/instagram'
     APP_NAME_CHOICES = ['LOVE', 'AMOR', 'AMORE', 'AMOUR']
-    WAIT_TIME = 3;
+    WAIT_TIME = 5
 
     is_logged_in = False
     is_developer = False
 
     def __init__(self, username, password):
-        self.browser = Browser('phantomjs', user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36")
+        self.browser = Browser('firefox', user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36")
         self.username = username
         self.password = password
 
@@ -138,7 +139,7 @@ class InstagramWebBot(object):
             app_name = self.APP_NAME_CHOICES[random.randint(0, (len(self.APP_NAME_CHOICES)-1))]
             description = random_string_generator()
             website_url = 'http://'+random_string_generator()
-            redirect_uri = 'http://dev.lovematically.fueled.com/complete/instagram'
+            redirect_uri = self.APP_REDIRECT_URI
 
             self.browser.visit(self.REGISTER_CLIENT_URL)
             self.browser.fill('name', app_name)
@@ -156,7 +157,7 @@ class InstagramWebBot(object):
               app_name = self.APP_NAME_CHOICES[random.randint(0, (len(self.APP_NAME_CHOICES)-1))]
               description = random_string_generator()
               website_url = 'http://'+random_string_generator()
-              redirect_uri = 'http://lovematically.com/complete/instagram'
+              redirect_uri = self.APP_REDIRECT_URI
 
               self.browser.fill('name', app_name)
               self.browser.fill('description', description)
@@ -179,8 +180,8 @@ class InstagramWebBot(object):
                 logger.error('Client registration failed: UNKNOW ERROR')
                 return False
             else:
-                return False
                 logger.error('Cannot register more clients with this accounts.')
+                return False
 
     def get_api_clients(self):
         self.browser.visit(self.MANAGE_CLIENTS_URL)
