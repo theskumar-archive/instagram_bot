@@ -31,10 +31,14 @@ class InstagramWebBot(object):
     is_logged_in = False
     is_developer = False
 
-    def __init__(self, username, password):
-        self.browser = Browser('firefox', user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36")
-        self.username = username
-        self.password = password
+    def __init__(self, username, password, browser=None):
+        if browser is not None:
+            self.browser = browser
+            self.browser.visit(self.LOGOUT_URL)
+        else:
+          self.browser = Browser('firefox', user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36")
+          self.username = username
+          self.password = password
 
     def slugify(self, str):
         return re.sub(r'\W+','_',str).lower()
